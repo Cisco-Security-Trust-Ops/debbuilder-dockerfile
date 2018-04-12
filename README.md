@@ -6,7 +6,7 @@ The intent is to distribute a base container for developing, building, and regre
 
 1. Allow user to mount their workspace - With docker, the ability to pass in -u to specify the user/group works well in most scenerios.  The dpkg-buildpackage tool, however, requires the arbitrary UIDs to have a username as well as sudoers access for that user.  See http://blog.dscpl.com.au/2015/12/random-user-ids-when-running-docker.html for details of this scenerio.  We used NSS Wrapper for this to allow the uid to be assigned the username rpmbuilder at runtime.
 
-1. Allow sudoers access for testing install in container - NSS Wrapper does not play nicely with sudo due to LD_PRELOAD and other environment variables needed by NSS Wrapper to properly work.  The sudoers file was modified to allow LD_PRELOAD and other environmental variables that are important for sudo to work.
+2. Allow sudoers access for testing install in container - NSS Wrapper does not play nicely with sudo due to LD_PRELOAD and other environment variables needed by NSS Wrapper to properly work.  The sudoers file was modified to allow LD_PRELOAD and other environmental variables that are important for sudo to work.
 
 # How to use this image
 
