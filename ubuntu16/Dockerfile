@@ -2,9 +2,8 @@ FROM ubuntu:xenial
 
 RUN dpkg --add-architecture i386 \
 && apt-get update \
-&& apt-get dist-upgrade -y
-
-RUN apt-get install -y \
+&& apt-get dist-upgrade -y \
+&& apt-get install -y \
     bc \
     build-essential \
     debhelper \
@@ -20,6 +19,9 @@ RUN apt-get install -y \
 
 #Add non-root user and set it as default user/workdir
 RUN useradd -d /debbuilder -s /bin/bash -G sudo debbuilder
+
+#common build scripts
+COPY scripts /debbuilder/scripts
 
 #NSS Wrapper items
 ENV NSS_WRAPPER_PASSWD=/tmp/passwd
@@ -48,6 +50,8 @@ RUN rm /tmp/dpkg_cross_compile_fix.sh
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod 755 /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+RUN mkdir -p /debbuilder/artifacts
 
 #Default user
 USER debbuilder
