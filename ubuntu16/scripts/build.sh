@@ -9,7 +9,6 @@ usage ()
 #########################################################################################
  Options:
  -h or --help              Display the HELP message and exit.
- --release                 Release number of the build.  Default 1
  --sign_rpms               Sign the rpms at the end.  This calls sign_rpms.py which requires a
                            the GPG_PASSPHRASE to be in the environment
  --x32                     Build 32 bit
@@ -21,7 +20,6 @@ _EOF_
 #set default interation
 SIGN_RPMS=false
 ARCH="x64"
-RELEASE=1
 CLEAN_BUILD=true
 
 for i in "$@"
@@ -37,10 +35,6 @@ do
     ;;
     --x32)
     ARCH="x32"
-    shift
-    ;;
-    --release=*)
-    RELEASE="${i#*=}"
     shift
     ;;
     --no-clean)
