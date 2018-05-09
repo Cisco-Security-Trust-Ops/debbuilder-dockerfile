@@ -52,24 +52,22 @@ do
   esac
 done
 
-#set variables for relative path
-SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-ROOT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
 
 #set build variables
-VERSION_NUMBER=$(cat ${ROOT_DIR}/build.properties | grep ^VERSION | awk -F'[=]' '{print $2}')
-SOURCE_BASE_URL=$(cat ${ROOT_DIR}/build.properties | grep ^SOURCE_BASE_URL | awk -F'[=]' '{print $2}')
-PROJECT_NAME=$(cat ${ROOT_DIR}/build.properties | grep ^PROJECT_NAME | awk -F'[=]' '{print $2}')
+HOME_DIR=/debbuilder
+VERSION_NUMBER=$(cat ${HOME_DIR}/build.properties | grep ^VERSION | awk -F'[=]' '{print $2}')
+SOURCE_BASE_URL=$(cat ${HOME_DIR}/build.properties | grep ^SOURCE_BASE_URL | awk -F'[=]' '{print $2}')
+PROJECT_NAME=$(cat ${HOME_DIR}/build.properties | grep ^PROJECT_NAME | awk -F'[=]' '{print $2}')
 SOURCE_NAME=${PROJECT_NAME}-${VERSION_NUMBER}
 
 #clean build directory unless specified otherwise, recreate
 if [ ${CLEAN_BUILD} = true ]; then
-  rm -rf  ${ROOT_DIR}/BUILD
+  rm -rf  ${HOME_DIR}/BUILD
 fi
-if [ ! -d ${ROOT_DIR}/BUILD/${PROJECT_NAME} ]; then
-  mkdir -p ${ROOT_DIR}/BUILD/${PROJECT_NAME}
+if [ ! -d ${HOME_DIR}/BUILD/${PROJECT_NAME} ]; then
+  mkdir -p ${HOME_DIR}/BUILD/${PROJECT_NAME}
 fi
-cd ${ROOT_DIR}/BUILD
+cd ${HOME_DIR}/BUILD
 
 #download and untar
 if [ ! -f ${SOURCE_NAME}.tar.gz ]; then
@@ -78,11 +76,11 @@ fi
 tar -zxvf ${SOURCE_NAME}.tar.gz --strip 1 -C ${PROJECT_NAME}
 
 #get the debian dir for supporting our build
-cd ${ROOT_DIR}
+cd ${HOME_DIR}
 cp -R debian BUILD/${PROJECT_NAME}
 
 #create the binary
-cd ${ROOT_DIR}/BUILD/${PROJECT_NAME}
+cd ${HOME_DIR}/BUILD/${PROJECT_NAME}
 if [ "$ARCH" = "x64" ]; then
   dpkg-buildpackage -b | tee ~/x64_txt.out 2>&1
 elif [ "$ARCH" = "x32" ]; then
@@ -92,6 +90,6 @@ else
 fi
 
 #copy *.deb and *.udeb artifacts for upload later on
-cd ${ROOT_DIR}/BUILD
-mkdir -p ${ROOT_DIR}/artifacts/${ARCH}
-mv *deb ${ROOT_DIR}/artifacts/${ARCH}
+cd ${HOME_DIR}/BUILD
+mkdir -p ${HOME_DIR}/artifacts/${ARCH}
+mv *deb ${HOME_DIR}/artifacts/${ARCH}
