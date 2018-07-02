@@ -20,9 +20,6 @@ RUN dpkg --add-architecture i386 \
 #Add non-root user and set it as default user/workdir
 RUN useradd -d /debbuilder -s /bin/bash -G sudo debbuilder
 
-#common build scripts
-COPY scripts /debbuilder/scripts
-
 #NSS Wrapper items
 ENV NSS_WRAPPER_PASSWD=/tmp/passwd
 ENV NSS_WRAPPER_GROUP=/tmp/group
@@ -45,6 +42,11 @@ COPY dpkg_cross_compile_fix.sh /tmp/dpkg_cross_compile_fix.sh
 RUN chmod 755 /tmp/dpkg_cross_compile_fix.sh
 RUN /tmp/dpkg_cross_compile_fix.sh
 RUN rm /tmp/dpkg_cross_compile_fix.sh
+
+#Scripts
+COPY scripts/ /tmp/scripts
+RUN chmod 755 /tmp/scripts/*
+RUN mv /tmp/scripts/* /usr/local/bin
 
 #Entrypoint
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
