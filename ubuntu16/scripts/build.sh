@@ -9,26 +9,19 @@ usage ()
 #########################################################################################
  Options:
  -h or --help              Display the HELP message and exit.
- --sign_rpms               Sign the rpms at the end.  This calls sign_rpms.py which requires a
-                           the GPG_PASSPHRASE to be in the environment
  --x32                     Build 32 bit
  --x64                     Build 64 bit (Default)
  --no_clean                Forces the BUILD directory to not be deleted
 _EOF_
 }
 
-#set default interation
-SIGN_RPMS=false
+#set default interaction
 ARCH="x64"
 CLEAN_BUILD=true
 
 for i in "$@"
 do
   case $i in
-    --sign_rpms)
-      SIGN_RPMS=true
-      shift
-    ;;
     --x64)
     ARCH="x64"
     shift
@@ -54,7 +47,7 @@ done
 
 
 #set build variables
-HOME_DIR=/debbuilder
+HOME_DIR=`pwd`
 VERSION_NUMBER=$(cat ${HOME_DIR}/build.properties | grep ^VERSION | awk -F'[=]' '{print $2}')
 SOURCE_BASE_URL=$(cat ${HOME_DIR}/build.properties | grep ^SOURCE_BASE_URL | awk -F'[=]' '{print $2}')
 PROJECT_NAME=$(cat ${HOME_DIR}/build.properties | grep ^PROJECT_NAME | awk -F'[=]' '{print $2}')
