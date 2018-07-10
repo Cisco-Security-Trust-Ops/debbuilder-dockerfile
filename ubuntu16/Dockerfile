@@ -6,6 +6,7 @@ RUN dpkg --add-architecture i386 \
 && apt-get install -y \
     bc \
     build-essential \
+    curl \
     debhelper \
     git \
     iputils-ping \
