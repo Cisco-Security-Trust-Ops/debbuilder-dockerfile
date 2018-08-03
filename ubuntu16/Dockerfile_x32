@@ -1,0 +1,56 @@
+FROM i386/ubuntu:xenial
+
+RUN apt-get update \
+&& apt-get dist-upgrade -y \
+&& apt-get install -y \
+    bc \
+    build-essential \
+    curl \
+    debhelper \
+    git \
+    iputils-ping \
+    libc6-dev \
+    libnss-wrapper \
+    m4 \
+    sudo \
+    vim \
+    wget \
+&& rm -rf /var/lib/apt/lists/*
+
+#Add non-root user and set it as default user/workdir
+RUN useradd -d /debbuilder -s /bin/bash -G sudo debbuilder
+
+#NSS Wrapper items
+ENV NSS_WRAPPER_PASSWD=/tmp/passwd
+ENV NSS_WRAPPER_GROUP=/tmp/group
+ENV USER_NAME=debbuilder
+ENV GROUP_NAME=debbuilder
+ENV HOME=/debbuilder
+COPY passwd.template /tmp/passwd.template
+COPY group.template /tmp/group.template
+RUN chmod 755 /tmp/passwd.template /tmp/group.template
+
+#Setuid on nss wrapper lib
+#You need this setuid flag set for sudo to load this
+RUN chmod 4755 /usr/lib/libnss_wrapper.so
+
+#Private copy of sudoers
+COPY sudoers /etc/sudoers
+
+#Scripts
+COPY scripts/ /tmp/scripts
+RUN chmod 755 /tmp/scripts/*
+RUN mv /tmp/scripts/* /usr/local/bin
+
+#Entrypoint
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod 755 /usr/local/bin/entrypoint.sh
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+RUN mkdir -p /debbuilder/artifacts
+
+#Default user
+USER debbuilder
+
+#Workdir
+WORKDIR /debbuilder
