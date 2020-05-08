@@ -64,7 +64,8 @@ cd ${HOME_DIR}/BUILD
 
 #download and untar
 if [ ! -f ${SOURCE_NAME}.tar.gz ]; then
-	wget ${SOURCE_BASE_URL}/${SOURCE_NAME}.tar.gz
+    # Added password because artifactory is password protected for extended support work
+	wget --user="${username}" --password="${password}"  ${SOURCE_BASE_URL}/${SOURCE_NAME}.tar.gz
 fi
 tar -zxvf ${SOURCE_NAME}.tar.gz --strip 1 -C ${PROJECT_NAME}
 
